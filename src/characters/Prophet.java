@@ -1,4 +1,4 @@
-package people;
+package characters;
 
 /**
  * Created by geyao on 16/7/4.

@@ -1,6 +1,6 @@
 package act;
 
-import people.Player;
+import characters.Player;
 
 /**
  * Created by geyao on 16.

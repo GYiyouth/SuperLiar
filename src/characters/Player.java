@@ -1,9 +1,6 @@
-package people;
-
-import act.Kill;
+package characters;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by geyao on 16/7/3.

@@ -1,4 +1,4 @@
-package people;
+package characters;
 
 import act.Kill;
 

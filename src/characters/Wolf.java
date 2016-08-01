@@ -1,10 +1,8 @@
-package people;
+package characters;
 
-import act.Clock;
 import act.Kill;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 /**

@@ -1,7 +1,6 @@
 package act;
 
-import people.*;
-import people.Wolf;
+import characters.*;
 
 import java.util.Timer;
 import java.util.TimerTask;

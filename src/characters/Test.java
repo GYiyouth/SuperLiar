@@ -1,8 +1,7 @@
-package people;
+package characters;
 
 
 import OthersPlayers.God;
-import act.Kill;
 
 import java.util.ArrayList;
 import java.util.HashMap;
