@@ -5,22 +5,22 @@ import act.Kill;
 /**
  * Created by geyao on 16/7/5.
  */
-public class Witch extends Player implements Kill{ // 女巫
+public class Witch extends Village implements Kill{ // 女巫
 
     private int antidote = 1 ; // 一瓶解药
     private int poison = 1; // 一瓶毒药
     private boolean saveYourself = false; // 默认不可自救
 
-    private Witch( int number ){ // 女巫构造函数,私有,单例
-        super(number);
+    private Witch( ){ // 女巫构造函数,私有,单例
+        super();
         this.setIdentity(2);
     }
 
     private static Witch witch = null; // 单例模式,唯一的女巫
 
-    public synchronized static Witch WitchBorn(int number ){ // 女巫诞生
+    public synchronized static Witch WitchBorn( ){ // 女巫诞生
         if( witch == null ){
-            witch = new Witch(number);
+            witch = new Witch();
         }
         return witch;
     }
@@ -41,7 +41,7 @@ public class Witch extends Player implements Kill{ // 女巫
         return false;
     }
 
-    public boolean save(Player deadplayer){ // 拯救某玩家, 会查询目标玩家状态, 解药状态, 解救以后毒药减1, 该玩家重生
+    public boolean save(Village deadplayer){ // 拯救某玩家, 会查询目标玩家状态, 解药状态, 解救以后毒药减1, 该玩家重生
         if( deadplayer.getalive() == false && this.getAntitode() ){
             if(!saveYourself && deadplayer.equals(this)) {
                 return false;
@@ -53,9 +53,9 @@ public class Witch extends Player implements Kill{ // 女巫
         return false;
     }
 
-    public int kill( Player player ){ // 毒杀目标玩家
-        if( player.getalive() && this.getPoison() ){
-            player.die();
+    public int kill( Village village){ // 毒杀目标玩家
+        if( village.getalive() && this.getPoison() ){
+            village.die();
             this.poison--;
             return 2;
         }

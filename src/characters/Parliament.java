@@ -20,12 +20,12 @@ public class Parliament implements Kill{
         return this.target;
     }
 
-    public void addVoter(Player player){ // 有新的投 目标玩家 的 投票者
-        voters.add( player.getNumber() );
+    public void addVoter(Village village){ // 有新的投 目标玩家 的 投票者
+        voters.add( village.getNumber() );
     }
 
-    public int kill( Player player ){
-        player.die();
+    public int kill( Village village){
+        village.die();
         return 3;
     }
 }

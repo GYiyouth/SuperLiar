@@ -12,7 +12,7 @@ public class Clock {
 
 
 
-    public void timeBegin( Player player ,int sec ){
+    public void timeBegin(Village village, int sec ){
         final Timer clock1 = new Timer();
         TimerTask tt = new TimerTask() {
             @Override

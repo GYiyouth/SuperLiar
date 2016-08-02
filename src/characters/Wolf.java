@@ -8,16 +8,16 @@ import java.util.Scanner;
 /**
  * Created by geyao on 16/7/5.
  */
-public class Wolf extends Player implements Kill{
+public class Wolf extends Village implements Kill{
 
     private int choice = 0;
 
-    public Wolf( int number ){ // 构造函数
-        super(number);
+    public Wolf( ){ // 构造函数
+        super();
         this.setIdentity(3);
     }
 
-    public int wolfkill( ArrayList<Integer> alivePlayers){ // 夜晚击杀函数, 参数是当前存货玩家的 座次数组
+    public int wolfkill( ArrayList<Integer> alivePlayers){ // 夜晚击杀函数, 参数是当前存活玩家的 座次数组
         System.out.println(alivePlayers+"可杀,请选择击杀目标");
         choice = 0; // 将choice置0
         Scanner in = new Scanner(System.in);
@@ -41,9 +41,9 @@ public class Wolf extends Player implements Kill{
         choice = 0;
     }
 
-    public int kill( Player player ){
-        if(player.getalive()){
-            player.die();
+    public int kill( Village village){
+        if(village.getalive()){
+            village.die();
             return 1;
         }
         else

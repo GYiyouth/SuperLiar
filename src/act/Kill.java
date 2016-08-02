@@ -1,12 +1,12 @@
 package act;
 
-import characters.Player;
+import characters.Village;
 
 /**
  * Created by geyao on 16.
  */
 public interface Kill {
-    public int  kill(Player player);
+    public int  kill(Village village);
     /**
      * 0代表错误
      * 1代表狼杀
