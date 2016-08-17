@@ -17,9 +17,9 @@ public class Wolf extends Village implements Kill{
         this.setIdentity(3);
     }
 
-    public int wolfkill( ArrayList<Integer> alivePlayers){ // 夜晚击杀函数, 参数是当前存活玩家的 座次数组
-        System.out.println(alivePlayers+"可杀,请选择击杀目标");
-        choice = 0; // 将choice置0
+    public int wolfkill( ArrayList<Integer> alivePlayers, ArrayList<Integer> WfKill){ // 夜晚击杀函数, 参数是当前存活玩家的 座次数组
+        System.out.println(alivePlayers+"可杀,请输入欲击杀玩家座次号");
+        choice = -1; // 将choice置 -1
         Scanner in = new Scanner(System.in);
         int choiceKill=0;
 //        Clock clock = new Clock();    计时器以后再做吧
@@ -27,9 +27,10 @@ public class Wolf extends Village implements Kill{
         do{
             choiceKill = in.nextInt();
         }
-        while ( confirmTarget( alivePlayers, choiceKill) == 0 && choice == 0 );
+        while ( confirmTarget( alivePlayers, choiceKill) == -1 && choice == -1 );
 //        clock.c
         this.choice = choiceKill;
+        WfKill.add(choice);
         return this.getChoice();
     }
 

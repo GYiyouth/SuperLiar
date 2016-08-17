@@ -43,9 +43,10 @@ public class Witch extends Village implements Kill{ // 女巫
 
     public boolean save(Village deadplayer){ // 拯救某玩家, 会查询目标玩家状态, 解药状态, 解救以后毒药减1, 该玩家重生
         if( deadplayer.getalive() == false && this.getAntitode() ){
-            if(!saveYourself && deadplayer.equals(this)) {
+            if( deadplayer.equals(this) && !saveYourself ) { // 如果被击杀的是女巫,并且设定不能自救, 返回false
                 return false;
             }
+
             this.antidote--;
             deadplayer.reborn();
             return true;
