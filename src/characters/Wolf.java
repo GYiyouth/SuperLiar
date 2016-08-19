@@ -1,5 +1,6 @@
 package characters;
 
+import RuleAlgorithm.Alive;
 import act.Kill;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Wolf extends Village implements Kill{
     }
 
     public int wolfkill( ArrayList<Integer> alivePlayers, ArrayList<Integer> WfKill){ // 夜晚击杀函数, 参数是当前存活玩家的 座次数组
+        System.out.println(this.getNumber()+"号玩家, 你的身份是狼人, 狼阵营的玩家有"+ Alive.Wolves.keySet());
         System.out.println(alivePlayers+"可杀,请输入欲击杀玩家座次号");
         choice = -1; // 将choice置 -1
         Scanner in = new Scanner(System.in);
@@ -44,7 +46,7 @@ public class Wolf extends Village implements Kill{
 
     public int kill( Village village){
         if(village.getalive()){
-            village.die();
+            village.die(1);
             return 1;
         }
         else

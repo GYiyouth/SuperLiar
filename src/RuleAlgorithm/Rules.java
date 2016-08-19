@@ -7,7 +7,7 @@ public class Rules {
 
 
     private final int totalNumber = this.creatPlayerNumbers(); // 产生随机8~12名玩家
-    private Group group = new Group(totalNumber);
+    private Group group = new Group();
 
     public int creatPlayerNumbers(){ // 获取玩家个数, 目前自己产生, 日后争取从服务器获取
         int numbers = (int)(( 5 * Math.random() )+8 ); // double转int, 舍去小数部分

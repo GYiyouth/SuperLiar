@@ -1,6 +1,9 @@
 package characters;
 
+import RuleAlgorithm.Alive;
+
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by geyao on 16/7/3.
@@ -50,8 +53,49 @@ public class Village { // 玩家
         System.out.println("发言共计"+this.talk()+"次");
     }
 
-    public int die(){ // 所有玩家都可能会死
+    public int die(int way){ // 死要进行移交警徽, 判胜负的功能, 死亡时移出Alive.intPlayers数组,
+        // 有遗言死way = 2, 无遗言死way = 1, 票死 = 3
         this.alive = false;
+        switch (this.getIdentity()){ // 根据身份从相应的map中去除
+            case 1:{ // 村民身份
+                Alive.Villagers.remove(this.getNumber()); break;
+            }
+            case 2:{ // 神民身份
+                Alive.Gods.remove(this.getNumber());break;
+            }
+            case 3:{ // 狼身份
+                Alive.Wolves.remove(this.getNumber());break;
+            }
+        }
+        Scanner in1 = new Scanner(System.in);
+        int num = Alive.intPlayers.indexOf(this.getNumber());
+        // 将该玩家从intAlive数组中移除
+        if (num != -1) {
+            Alive.intPlayers.remove(num);
+        }
+
+
+        // 根据死亡方式决定是否说话
+        System.out.println(this.getNumber()+"号玩家死亡");
+        switch (way){
+            case 1 : System.out.println("无遗言");break;
+            case 2 : {
+                System.out.println("首夜被杀, 有遗言");
+                this.talk();
+            } break;
+            case 3 :{
+                System.out.println("被票死, 有遗言");
+                this.talk();
+            }break;
+        }
+        if (this.isPolice){ // 如果该玩家是警长, 则进行警徽移交或撕警徽
+            System.out.println("请选择移交警徽, 当前存活玩家如下, 请输入他们的序号, 否则输入 -1 撕掉警徽");
+            System.out.println(Alive.intPlayers);
+            int target = in1.nextInt();
+            if (Alive.intPlayers.contains(target)){
+                this.setPolice(Alive.Players.get(target));
+            }
+        }
         return this.getNumber();
     }
 
@@ -83,11 +127,10 @@ public class Village { // 玩家
     }
 
     public boolean reborn(){ // 玩家重生
-        if( this.getalive() == false ){
+
             this.alive = true;
             return true;
-        }
-        return false;
+
     }
 /**
  * 以下这种方法是不安全的,向下转型的典型错误示范
@@ -138,6 +181,10 @@ public class Village { // 玩家
             return false;
         this.isPolice = true;
         return true;
+    }
+
+    public void wantPolice(){ // 试图竞选警长
+        this.WantPolice = true;
     }
 
     public boolean removePolice( Village village){ // 让玩家下警

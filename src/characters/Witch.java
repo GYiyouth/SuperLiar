@@ -35,6 +35,22 @@ public class Witch extends Village implements Kill{ // 女巫
         return false;
     }
 
+    public boolean useAntitode(){ // 使用解药
+        if (getAntitode()){
+            this.antidote = 0;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean usePoison(){
+        if ((getPoison())){
+            this.poison = 0;
+            return true;
+        }
+        return false;
+    }
+
     public boolean getPoison(){ // 查询毒药数量
         if( this.poison == 1 )
             return true;
@@ -42,7 +58,7 @@ public class Witch extends Village implements Kill{ // 女巫
     }
 
     public boolean save(Village deadplayer){ // 拯救某玩家, 会查询目标玩家状态, 解药状态, 解救以后毒药减1, 该玩家重生
-        if( deadplayer.getalive() == false && this.getAntitode() ){
+        if(  this.getAntitode() ){ // 如果有毒药
             if( deadplayer.equals(this) && !saveYourself ) { // 如果被击杀的是女巫,并且设定不能自救, 返回false
                 return false;
             }
@@ -56,7 +72,7 @@ public class Witch extends Village implements Kill{ // 女巫
 
     public int kill( Village village){ // 毒杀目标玩家
         if( village.getalive() && this.getPoison() ){
-            village.die();
+            village.die(1);
             this.poison--;
             return 2;
         }

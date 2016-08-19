@@ -22,4 +22,21 @@ public class Fool extends Village {
         return false;
     }
 
+    @Override
+    public int die(int way){
+        switch (way){
+            case 1 : return super.die(1); // 狼人第二天及以后刀杀, 无遗言死
+            case 2 : return super.die(2);// 狼人第一天刀杀, 或者别的有遗言死情况
+            case 3: {
+                if (getSheild() == 1) { // 被票死 且有免死机会
+                    useSheild();
+                    return -1;
+                }else
+                    return super.die(3);
+            }
+        }
+        return this.getIdentity();
+
+    }
+
 }

@@ -25,7 +25,7 @@ public class Parliament implements Kill{
     }
 
     public int kill( Village village){
-        village.die();
+        village.die(2);
         return 3;
     }
 }

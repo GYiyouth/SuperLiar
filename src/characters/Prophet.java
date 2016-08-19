@@ -10,7 +10,14 @@ public class Prophet extends Village { // 预言家
         this.setIdentity(2);
     }
 
-    public int getIdentity(Village village){ // 可以查询某个玩家的身份
+    public int checkIdentity(Village village){ // 可以查询某个玩家的身份
+        System.out.print(village.getNumber()+"号玩家的身份是");
+        switch (village.getIdentity()){
+            case 0:System.out.println("中立"); break;
+            case 1:System.out.println("好人"); break;
+            case 2:System.out.println("好人"); break;
+            case 3:System.out.println("坏人"); break;
+        }
         return village.getIdentity();
     }
 }
