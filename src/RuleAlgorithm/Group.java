@@ -22,7 +22,7 @@ public class Group {
     private ArrayList<Integer> intAlivePlayers = new ArrayList<>(); // 存活玩家的数组,包含玩家座次号
      ArrayList<Integer> WfKill = new ArrayList<>(); // 狼人刀杀的目标
     private ArrayList<Integer> VoteKill = new ArrayList<>(); // 票杀的目标组合
-    private ArrayList<Integer> Leaving = new ArrayList<>(); // 即将离场的人
+
 
 
 
@@ -151,7 +151,7 @@ public class Group {
             return Alive.Players;
     }
 
-    public Village getPlayers(int num){ // 根据座位号返回玩家
+    public static Village getPlayers(int num){ // 根据座位号返回玩家
         return Alive.Players.get(num);
     }
 
@@ -247,12 +247,12 @@ public class Group {
         // 宣布死亡结果
         System.out.println("【【【天亮了!!!】】】");
         creatPolice(); // 先产生警长
-        if (Leaving.isEmpty())
+        if (Alive.Leaving.isEmpty())
             System.out.println("昨天晚上是平安夜");
         else {
-            System.out.println("昨天晚上死的人是\t"+ Leaving);
+            System.out.println("昨天晚上死的人是\t"+ Alive.Leaving);
         }
-        for (int i : Leaving){ // 死亡玩家离场, 第一天有遗言
+        for (int i : Alive.Leaving){ // 死亡玩家离场, 第一天有遗言
             Alive.Players.get(i).die(2);
             isGameEndAndWhoLose(); // 判胜负
             Alive.Players.get(i).leave();
@@ -267,12 +267,12 @@ public class Group {
 
     public void Day(){ // 白天函数
         System.out.println("【【【天亮了!!!】】】");
-        if (Leaving.isEmpty())
+        if (Alive.Leaving.isEmpty())
             System.out.println("昨天晚上是平安夜");
         else {
-            System.out.println("昨天晚上死的人是\t"+ Leaving);
+            System.out.println("昨天晚上死的人是\t"+ Alive.Leaving);
         }
-        for (int i : Leaving){ // 死亡玩家离场, 无遗言
+        for (int i : Alive.Leaving){ // 死亡玩家离场, 无遗言
             Alive.Players.get(i).die(1);
             isGameEndAndWhoLose(); // 判胜负
             Alive.Players.get(i).leave();
@@ -289,7 +289,7 @@ public class Group {
          * 这个函数不完整, 因为狼刀的过程, 各个狼之间可以眼神交流, 交换欲击杀的目标, 从而达成一致
          * */
         WfKill.clear(); // 上一轮刀杀目标残留在数组中,清空
-        Leaving.clear(); // 将上一轮将离场玩家清除
+        Alive.Leaving.clear(); // 将上一轮将离场玩家清除
         for (Village wolf : Alive.Wolves.values()) { // 遍历狼表,将欲击杀目标座次号添加到WfKill数组中
             Wolf wf = (Wolf) wolf;
             wf.wolfkill(Alive.intPlayers, WfKill);
@@ -300,14 +300,14 @@ public class Group {
         }
         int dyingMan = -1;
         int max = 0;
-        for (int i = 0; i < intPlayers.length; i++){ // 找出被最多狼刀杀的那一个
+        for (int i = 0; i < intPlayers.length; i++){ // 找出被最多狼刀杀的那一个, 如果有多个平票, 则击杀第一个最高票玩家
             if (count[i] > max ){
                 max = count[i];
                 dyingMan = i;
             }
         }
 
-        Leaving.add(dyingMan); // 将最终击杀目标添加到Leaving数组中
+        Alive.Leaving.add(dyingMan); // 将最终击杀目标添加到Leaving数组中
 
         return dyingMan;
     }
@@ -316,13 +316,14 @@ public class Group {
         if (getWitch().getalive()) { // 女巫须存活
 
             if (this.getWitch().getAntitode()) { // 如果解药还在, 将告知刀杀目标并决定是否营救
-                if (Leaving.get(0) != getWitch().getNumber()) { // 刀杀玩家不是女巫
-                    System.out.println("女巫, 你的座次号是" + getWitch().getNumber() + " 今天晚上被击杀的玩家是" + Leaving.toString() + "\t 营救请输入1, 否则输入2");
+                if (Alive.Leaving.get(0) != getWitch().getNumber()) { // 刀杀玩家不是女巫
+                    System.out.println("女巫, 你的座次号是" + getWitch().getNumber() +
+                            " 今天晚上被击杀的玩家是" + Alive.Leaving.toString() + "\t 营救请输入1, 否则输入2");
                     if (in.nextInt() == 1) {
                         try {
 //                            getWitch().save(Alive.Players.get(Leaving.get(0)));
                             getWitch().useAntitode();
-                            Leaving.remove(0); // 营救后将被刀杀溢出将离场数组
+                            Alive.Leaving.remove(0); // 营救后将被刀杀溢出将离场数组
                         } catch (Exception e) {
                             System.out.println("女巫不可自救");
                             WitchAct();
@@ -330,21 +331,25 @@ public class Group {
                         }
                     }
                 }
-                else
+                else // 女巫被狼人刀
                     System.out.println("女巫, 你的座次号是"+getWitch().getNumber()+"  今晚你被击杀, 不可自救");
             }
             else { // 解药已经没有了
                 System.out.println("女巫, 你已经没有解药了, 将不会告诉你谁被击杀");
             }
             if (this.getWitch().getPoison()) { // 如果毒药还在
-                System.out.println("当前场上玩家为"+Alive.intPlayers+" 号");
+                ArrayList<Integer> temp = new ArrayList<>(); // 新建一个包含所有存活玩家,但不包含将死玩家的数组
+                temp.clear();
+                temp.addAll(Alive.intPlayers);
+                temp.removeAll(Alive.Leaving);
+                System.out.println("当前场上玩家为"+temp+" 号");
                 System.out.println("你有一瓶毒药,你要用吗, 如果使用请输入欲毒玩家座次号,否则请输入-1");
                 try {
                     int target = in.nextInt();
-                    if (Alive.intPlayers.contains(target) && !Leaving.contains(target)){ // 该玩家在场, 且未被刀杀
+                    if (temp.contains(target)){ // 该玩家在场, 且未被刀杀
                         getWitch().usePoison();
-                        Leaving.add(target); // 将被毒杀玩家添加至离场玩家数组
-                        Alive.intPlayers.remove(Alive.intPlayers.indexOf(target));
+                        Alive.Leaving.add(target); // 将被毒杀玩家添加至离场玩家数组
+//                        Alive.intPlayers.remove(Alive.intPlayers.indexOf(target));
                     }
                 }
                 catch (Exception e){
@@ -556,8 +561,8 @@ public class Group {
 
     }
     public void TalkInOrders(){ // 如果无死者或者多个死者, 从警长开始发言, 否则从死左开始发言 。 警长总是最后发言
-        if (Leaving.size() == 1){ // 如果仅有一位死者
-            int x = Alive.intPlayers.indexOf(Leaving.get(0)); // x 为死者在Alive.intPlayers的index
+        if (Alive.Leaving.size() == 1){ // 如果仅有一位死者
+            int x = Alive.intPlayers.indexOf(Alive.Leaving.get(0)); // x 为死者在Alive.intPlayers的index
             for (int i = x+1; i < Alive.intPlayers.size(); i++ ){ // x+1 ~ 最后一名玩家发言, i 同 x仅为index而非座次号
                 if (Alive.intPlayers.get(i) == getPolice() ) // 如果该玩家是警长, 跳过
                     continue;

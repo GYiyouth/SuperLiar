@@ -11,9 +11,10 @@ import java.util.HashMap;
 public class Alive { // 全局变量类
     private Alive(){}
 
-    public static ArrayList<Integer> intPlayers = new ArrayList<>();
-    public static HashMap<Integer, Village> Players = new HashMap<>();
-    public static HashMap<Integer, Village> Villagers = new HashMap<>();
-    public static HashMap<Integer, Village> Gods = new HashMap<>();
-    public static HashMap<Integer, Village> Wolves = new HashMap<>();
+    public static volatile ArrayList<Integer> intPlayers = new ArrayList<>();
+    public static volatile ArrayList<Integer> Leaving = new ArrayList<>();
+    public static volatile HashMap<Integer, Village> Players = new HashMap<>();
+    public static volatile HashMap<Integer, Village> Villagers = new HashMap<>();
+    public static volatile HashMap<Integer, Village> Gods = new HashMap<>();
+    public static volatile HashMap<Integer, Village> Wolves = new HashMap<>();
 }

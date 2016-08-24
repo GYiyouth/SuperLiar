@@ -68,11 +68,11 @@ public class Village { // 玩家
             }
         }
         Scanner in1 = new Scanner(System.in);
-        int num = Alive.intPlayers.indexOf(this.getNumber());
+//        int num = Alive.intPlayers.indexOf(this.getNumber());
         // 将该玩家从intAlive数组中移除
-        if (num != -1) {
-            Alive.intPlayers.remove(num);
-        }
+//        if (num != -1) {
+//            Alive.intPlayers.remove(num);
+//        }
 
 
         // 根据死亡方式决定是否说话
@@ -89,11 +89,18 @@ public class Village { // 玩家
             }break;
         }
         if (this.isPolice){ // 如果该玩家是警长, 则进行警徽移交或撕警徽
+            ArrayList<Integer> temp = new ArrayList<>(); // 新建一个包含所有存活玩家,但不包含将死玩家的数组
+            temp.clear();
+            temp.addAll(Alive.intPlayers);
+            temp.removeAll(Alive.Leaving);
             System.out.println("请选择移交警徽, 当前存活玩家如下, 请输入他们的序号, 否则输入 -1 撕掉警徽");
-            System.out.println(Alive.intPlayers);
+            System.out.println(temp);
             int target = in1.nextInt();
-            if (Alive.intPlayers.contains(target)){
-                this.setPolice(Alive.Players.get(target));
+            if (temp.contains(target)){
+                this.setPolice(Alive.Players.get(target)); // 新的警长产生
+            }
+            else {
+                System.out.println("输入有误,警徽将被撕毁");
             }
         }
         return this.getNumber();
