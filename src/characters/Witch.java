@@ -13,7 +13,7 @@ public class Witch extends Village implements Kill{ // 女巫
 
     private Witch( ){ // 女巫构造函数,私有,单例
         super();
-        this.setIdentity(2);
+        this.setIdentity(4);
     }
 
     private static Witch witch = null; // 单例模式,唯一的女巫

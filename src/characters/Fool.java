@@ -7,7 +7,7 @@ public class Fool extends Village {
     private int sheild = 1; // 免票死次数
     public Fool(){ // 构造函数
         super();
-        this.setIdentity(2);
+        this.setIdentity(6);
     }
 
     public int getSheild(){ // 查询免死次数
