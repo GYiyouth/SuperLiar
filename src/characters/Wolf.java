@@ -31,9 +31,12 @@ public class Wolf extends Village implements Kill{
 //        }
 //        while ( confirmTarget( alivePlayers, choiceKill) == -1 && choice == -1 );
 //        clock.c
-        this.choice = choiceKill;
-        WfKill.add(choice);
-        return this.getChoice();
+        if (alivePlayers.contains(choiceKill)) {
+            this.choice = choiceKill;
+            WfKill.add(choice);
+            return this.getChoice();
+        }
+        else return -1;
     }
 
     @Override

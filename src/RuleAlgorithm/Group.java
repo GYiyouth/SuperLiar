@@ -49,10 +49,12 @@ public class Group extends Thread{
          *  注意,0预言家 1女巫 2猎人 9白痴(11人局以上有)
          * */
         Alive.voteKey = new boolean[tableNumber]; // 投票关键字初始化为false
+        Alive.voteResult = new int[tableNumber];
         for (int i =0; i < tableNumber; i++) {
             Alive.voteKey[i] = false;
             Alive.candidates.put(i, new ArrayList<Integer>());
             Alive.candidates.get(i).clear();
+            Alive.voteResult[i] = 0;
         }
 
 
@@ -254,7 +256,9 @@ public class Group extends Thread{
 
     public void FirstDay(){ // 第一个白天函数, 主要阶段是上警,宣布死亡结果, 组织发言顺序, 发言, 投票
         // 宣布死亡结果
+        Alive.dayKey = true;
         MessageToAll("【【【天亮了!!!】】】\n");
+
         creatPolice(); // 先产生警长
         if (Alive.Leaving.isEmpty())
             MessageToAll("昨天晚上是平安夜");
@@ -271,10 +275,11 @@ public class Group extends Thread{
         Alive.Players.get(KilledByVote).die(3); // 票死, 有遗言
         isGameEndAndWhoLose(); // 判胜负
         Alive.Players.get(KilledByVote).leave();
-
+        Alive.dayKey = false;
     }
 
     public void Day(){ // 白天函数
+        Alive.dayKey = true;
         MessageToAll("【【【天亮了!!!】】】");
         if (Alive.Leaving.isEmpty())
             MessageToAll("昨天晚上是平安夜");
@@ -291,6 +296,7 @@ public class Group extends Thread{
         Alive.Players.get(KilledByVote).die(3); // 票死, 有遗言
         isGameEndAndWhoLose(); // 判胜负
         Alive.Players.get(KilledByVote).leave();
+        Alive.dayKey = false;
     }
 
     public int WolfAct(){ // 狼人行动, 返回最后确定击杀的那一个
@@ -299,22 +305,26 @@ public class Group extends Thread{
          * */
         WfKill.clear(); // 上一轮刀杀目标残留在数组中,清空
         Alive.Leaving.clear(); // 将上一轮将离场玩家清除
-        for (Village wolf : Alive.Wolves.values()) { // 遍历狼表,将欲击杀目标座次号添加到WfKill数组中
-            Wolf wf = (Wolf) wolf;
-            wf.wolfkill(Alive.intPlayers, WfKill);
+//        for (Village wolf : Alive.Wolves.values()) { // 遍历狼表,将欲击杀目标座次号添加到WfKill数组中
+//            Wolf wf = (Wolf) wolf;
+//            wf.wolfkill(Alive.intPlayers, WfKill);
+//        }
+//        int count[] = new int[WfKill.size()]; // 统计谁的票最多
+//        for (int i : WfKill){
+//            count [i] ++;
+//        }
+        ArrayList<Integer> wolves = new ArrayList<>();
+        for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 遍历新表,打印
+            wolves.add(entry.getKey());
         }
-        int count[] = new int[intPlayers.length]; // 统计谁的票最多
-        for (int i : WfKill){
-            count [i] ++;
-        }
-        int dyingMan = -1;
-        int max = 0;
-        for (int i = 0; i < intPlayers.length; i++){ // 找出被最多狼刀杀的那一个, 如果有多个平票, 则击杀第一个最高票玩家
-            if (count[i] > max ){
-                max = count[i];
-                dyingMan = i;
-            }
-        }
+        int dyingMan = Vote(wolves, Alive.intPlayers);
+//        int max = 0;
+//        for (int i = 0; i < intPlayers.length; i++){ // 找出被最多狼刀杀的那一个, 如果有多个平票, 则击杀第一个最高票玩家
+//            if (count[i] > max ){
+//                max = count[i];
+//                dyingMan = i;
+//            }
+//        }
 
         Alive.Leaving.add(dyingMan); // 将最终击杀目标添加到Leaving数组中
 
@@ -385,13 +395,15 @@ public class Group extends Thread{
                 ;
             int target = -1;
             for (int i = 0; i < tableNumber; i++){ // 统计
-                if (Alive.voteResult[i] != 0){
+                if (Alive.voteResult[i] > 0){
                     target = i;
                     Alive.voteResult[i] = 0;
                     break;
                 }
             }
-            getProphet().checkIdentity(Alive.Players.get(target));
+            if (Alive.intPlayers.contains(target)) {
+                getProphet().checkIdentity(Alive.Players.get(target));
+            }
 
 
         }
@@ -498,8 +510,8 @@ public class Group extends Thread{
             sendMessage("请点击玩家座次\n", num); // num是玩家座次号
             Alive.candidates.get(num).clear(); // 先清空
             Alive.candidates.put(num, Candidates); // 将候选人数组放置
-            Alive.voteResult[num] = 0; // 投票结果先清零
-            Alive.voteKey[num] = true; // 唤醒玩家投票
+
+            Alive.voteKey[num] = true; // 唤醒玩家投票, 交给狼人的夜晚函数
         }
         for (int num: Voters) { // 确定每个玩家都投完票了, num 为投票者的下标
             while (Alive.voteKey[num]){ // 还在投票

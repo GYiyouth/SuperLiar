@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class Village implements Runnable { // 玩家
 
-    private int number = -1; // 玩家座次号
+    private volatile int number = -1; // 玩家座次号
     private String name; // 玩家姓名
     private boolean alive = true; // 存活状态, true是存活
     private boolean WantPolice = false; // 试图上警,初始为没有上警经历
@@ -28,7 +28,8 @@ public class Village implements Runnable { // 玩家
 
     public Thread voteThread;
     public Thread chonfirmThread;
-//    private static volatile boolean endKey = false; // 控制游戏结束
+    public Thread village;
+    //    private static volatile boolean endKey = false; // 控制游戏结束
 //    private static volatile Object lockObjEnd = new Object(); // 结束游戏的key
     // GUI相关成员
     JFrame welcome = new JFrame("欢迎来到狼人杀游戏");
@@ -59,7 +60,7 @@ public class Village implements Runnable { // 玩家
     public Village() { // 构造函数
 
 
-        Thread village = new Thread(this,"玩家座次号"+getNumber());
+        village = new Thread(this);
         village.start();
         chonfirmThread = new Thread(new Runnable() { // 投票线程, 需要调用者, 目前仅用于警长竞选
             @Override
@@ -103,6 +104,7 @@ public class Village implements Runnable { // 玩家
         center.add(new JScrollPane(jTextArea)); // 文字区域文字区域启动滚动条
         jTextArea.setLineWrap(true); // 自动换行
         myButtonGroup = new MyButtonGroup();
+        village.setName("座次号为"+this.getNumber()+toString()); // 修改线程名字
         switch (this.getIdentity()) {
             case 1:
                 welcome.setTitle("村民, 座次号为" + this.getNumber() + "号");
@@ -418,7 +420,7 @@ public class Village implements Runnable { // 玩家
                 myButtons[i].refresh();
 
             }
-            myButtons[getNumber()].setText("自己  "+getNumber()+"号玩家"); // 自己的按钮特殊处理
+            myButtons[getNumber()].setText("自己  "+(getNumber()+1)+"号玩家"); // 自己的按钮特殊处理
             for (int i = 0; i < 4; i++) {
                 north.add(myButtons[i]); // 添加前四个按钮
             }
