@@ -245,10 +245,12 @@ public class Group extends Thread{
     }
 
     public void Night(){ // 夜晚函数,主要阶段是狼人刀,女巫救,预言家查看
+        Alive.nightKey = true;
         MessageToAll("【【【天黑了!!!】】】\n");
         ProphetAct();
         WolfAct();
         WitchAct();
+        Alive.nightKey = false;
         // 此时留下了Leaving数组给上帝宣布死亡
     }
 
@@ -263,7 +265,10 @@ public class Group extends Thread{
         if (Alive.Leaving.isEmpty())
             MessageToAll("昨天晚上是平安夜");
         else {
-            MessageToAll("昨天晚上死的人是\t"+ Alive.Leaving);
+            MessageToAll("昨天晚上死的人是\n");
+            for (int i : Alive.Leaving){
+                MessageToAll((i+1) + "号玩家\n");
+            }
         }
         for (int i : Alive.Leaving){ // 死亡玩家离场, 第一天有遗言
             Alive.Players.get(i).die(2);
@@ -284,7 +289,10 @@ public class Group extends Thread{
         if (Alive.Leaving.isEmpty())
             MessageToAll("昨天晚上是平安夜");
         else {
-            MessageToAll("昨天晚上死的人是\t"+ Alive.Leaving);
+            MessageToAll("昨天晚上死的人是\n");
+            for (int i : Alive.Leaving){
+                MessageToAll((i+1) + "号玩家\n");
+            }
         }
         for (int i : Alive.Leaving){ // 死亡玩家离场, 无遗言
             Alive.Players.get(i).die(1);
@@ -336,8 +344,8 @@ public class Group extends Thread{
 
             if (this.getWitch().getAntitode()) { // 如果解药还在, 将告知刀杀目标并决定是否营救
                 if (Alive.Leaving.get(0) != getWitch().getNumber()) { // 刀杀玩家不是女巫
-                    sendMessage("女巫, 你的座次号是" + getWitch().getNumber() +
-                            " \n今天晚上被击杀的玩家是" + Alive.Leaving.toString() + "\n 营救请确定, 否则放弃\n",
+                    sendMessage("女巫, 你的座次号是" + (getWitch().getNumber() + 1) +
+                            " \n今天晚上被击杀的玩家是" + (Alive.Leaving.get(0) + 1) + "\n 营救请确定, 否则放弃\n",
                             getWitch().getNumber()); // 给女巫发信息
                     if (getWitch().MadeChoose()) { // 确定营救
                         try {
@@ -352,7 +360,7 @@ public class Group extends Thread{
                     }
                 }
                 else // 女巫被狼人刀
-                    sendMessage("女巫, 你的座次号是"+getWitch().getNumber()+"\n  今晚你被击杀, 不可自救\n",
+                    sendMessage("女巫, 今晚你被击杀, 不可自救\n",
                             getWitch().getNumber());
             }
             else { // 解药已经没有了
@@ -363,8 +371,8 @@ public class Group extends Thread{
                 temp.clear();
                 temp.addAll(Alive.intPlayers);
                 temp.removeAll(Alive.Leaving);
-                sendMessage("当前场上玩家为"+temp+" 号", getWitch().getNumber());
-                sendMessage("你有一瓶毒药,你要用吗, 如果使用请点击该玩家按钮,否则请点放弃", getWitch().getNumber());
+//                sendMessage("当前场上玩家为"+temp+" 号", getWitch().getNumber());
+                sendMessage("\n你有一瓶毒药,你要用吗, 如果使用请点击该玩家按钮,否则请点放弃\n", getWitch().getNumber());
                 try {
                     int target = getWitch().input(temp); // 根据temp数组选择目标
                     if (temp.contains(target)){ // 该玩家在场, 且未被刀杀
@@ -385,9 +393,9 @@ public class Group extends Thread{
 
     public void ProphetAct(){ // 预言家行动
         if(getProphet().getalive()){ // 预言家存活
-            sendMessage("预言家, 你的座次号是"+getProphet().getNumber()+"\n目前存活的玩家有\n"+ Alive.intPlayers,
-                    getProphet().getNumber());
-            sendMessage("\n请选择要查看的玩家身份, 并点击按钮", getProphet().getNumber());
+//            sendMessage("预言家, 你的座次号是"+getProphet().getNumber()+"\n目前存活的玩家有\n"+ Alive.intPlayers,
+//                    getProphet().getNumber());
+            sendMessage("\n请选择要查看的玩家身份, 并点击按钮\n", getProphet().getNumber());
             Alive.candidates.get(getProphet().getNumber()).clear();
             Alive.candidates.get(getProphet().getNumber()).addAll(Alive.intPlayers); // 添加存活玩家
             Alive.voteKey[getProphet().getNumber()] = true; // 开启投票
@@ -413,9 +421,9 @@ public class Group extends Thread{
 
         int[] wantPolice = new int[tableNumber]; // 和玩家个数等长的数组, 下标代表座次号, 值1为上警
         for (int i =0; i < tableNumber; i++){ // 遍历玩家, 产生两个数组, 分别包含上警与不上警玩家,
-            sendMessage(i+"号玩家, 你是否要竞选警长, 警长可以组织发言, 并有归票权, 且一票顶两票\n", i);
+            sendMessage((i + 1)+"号玩家, 你是否要竞选警长, 警长可以组织发言, 并有归票权, 且一票顶两票\n", i);
             sendMessage("竞选请确定, 不竞选请放弃\n", i);
-            Alive.voteResult[i] = -1; // 清零
+            Alive.voteResult[i] = 0; // 清零
             Alive.Players.get(i).chonfirmThread.start(); // 开启投票线程
         }
         for (int i = 0; i < tableNumber; i ++)
@@ -430,7 +438,7 @@ public class Group extends Thread{
             if (i == 1) // 未弃权
                 candidate += i;
             wantPolice[index] = Alive.voteResult[index]; // 得到了一个包含01的数组, 1代表上警
-            Alive.voteResult[index] = -1; // 重置投票结果
+            Alive.voteResult[index] = 0; // 重置投票结果
             index++;
         }
         switch (candidate){ // 根据竞选人不同, 情况不同
@@ -455,19 +463,24 @@ public class Group extends Thread{
                 for (int i : wantPolice){ // 生成分别包含竞选人和投票人的两个数组, i仅为 0 或 1
                     if (i == 1) {
                         candidates.add(target); // 将候选人座次号添加
-                        int num;
-                        num = voters.indexOf(target);
-                        voters.remove(num); // 将该候选人从投票人中移除
+//                        int num;
+//                        num = voters.indexOf(target);
+//                        voters.remove(num); // 将该候选人从投票人中移除
                     }
                     target++;
                 }
+                voters.removeAll(candidates); // 将该候选人从投票人中移除
                 for (int i : candidates){ // 每个候选人发言, 次序为升序
                     Alive.Players.get(i).talk();
                 }
-                System.out.println("目前竞选玩家为"+ candidates);
+                MessageToAll("目前竞选玩家为\t");
+                for (int i: candidates){
+                    MessageToAll((i + 1) + "  ");
+                }
+                MessageToAll("号玩家\t");
                 int len = candidates.size();
-                for (int i =len -1; i >= 0; i--){ // 投票前是否要退水 , i 为玩家座次号
-                    sendMessage(candidates.get(i)+"号玩家, 是否退水, 退水请点是, 否则请点2\n", i);
+                for (int i =len -1; i >= 0; i--){ // 投票前是否要退水 , i 为玩家在candidates里序号
+                    sendMessage((candidates.get(i) + 1) +"号玩家, 是否退水, 退水请点是, 否则请点2\n", candidates.get(i));
                     boolean rst = Alive.Players.get(i).MadeChoose();
                     if (rst ){ // 退水, 则从竞选人数组脱离, 而不添加至投票人数组
 
@@ -479,13 +492,14 @@ public class Group extends Thread{
                 * 这里还有改进空间, 理想状态是玩家随时可以点击下水按钮
                 * */
                 if (candidates.size() == 1){
-                    MessageToAll("仅剩一名玩家上警, "+candidates.get(0)+" 号玩家当选警长");
+                    MessageToAll("仅剩一名玩家上警 \n");
                     Alive.Players.get(candidates.get(0)).setPolice();
+                    MessageToAll((getPolice() + 1)+"号玩家当选警长");
                     return;
                 }
                 MessageToAll("最终竞选玩家为"+candidates);
                 int Police = Vote(voters, candidates);
-                MessageToAll(Police+"号玩家当选警长");
+                MessageToAll((Police + 1)+"号玩家当选警长");
                 Alive.Players.get(Police).setPolice(); // 将该玩家设为警长
 
             }
@@ -506,7 +520,7 @@ public class Group extends Thread{
             Alive.voteResult[i] = 0; // 初始票为0
 
         for (int num: Voters){ // 每个投票人进行投票, 结果放在Aiive.voteResult中
-            sendMessage(num+" 号玩家, 现在进行投票,候选人有\n"+ Candidates+"\n", num);
+            sendMessage((num+1)+" 号玩家, 现在进行投票,候选人有\n"+ Candidates+"\n", num);
             sendMessage("请点击玩家座次\n", num); // num是玩家座次号
             Alive.candidates.get(num).clear(); // 先清空
             Alive.candidates.put(num, Candidates); // 将候选人数组放置
@@ -538,7 +552,7 @@ public class Group extends Thread{
                 }
                 p++;
             }
-            Alive.voteResult[i] = 0; // 记完票就会清0
+//            Alive.voteResult[i] = 0; // 记完票就会清0
         }
         switch (index.size()){ // 根据平票个数来判定, 如果为0 说明皆弃权,再次投票, 为1 产生结果, 为多个则需要再次投票
             case 0:{

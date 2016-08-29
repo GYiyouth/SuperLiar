@@ -33,7 +33,8 @@ public class Hunter extends Village  {
         jTextArea.append("请输入欲击杀的玩家 不击杀则点放弃\n");
 
         int target = input(temp); //
-        Alive.Players.get(target).die(1); // 猎人带走无遗言
+        if (temp.contains(target)) // 如果选择了玩家
+            Alive.Players.get(target).die(1); // 猎人带走无遗言
         super.die(way);
         return this.getNumber();
 

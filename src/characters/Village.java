@@ -107,22 +107,22 @@ public class Village implements Runnable { // 玩家
         village.setName("座次号为"+this.getNumber()+toString()); // 修改线程名字
         switch (this.getIdentity()) {
             case 1:
-                welcome.setTitle("村民, 座次号为" + this.getNumber() + "号");
+                welcome.setTitle("村民, 座次号为" + (this.getNumber() + 1 ) + "号");
                 break;
             case 2:
-                welcome.setTitle("狼人, 座次号为" + this.getNumber() + "号");
+                welcome.setTitle("狼人, 座次号为" + (this.getNumber() + 1 ) + "号");
                 break;
             case 3:
-                welcome.setTitle("预言家, 座次号为" + this.getNumber() + "号");
+                welcome.setTitle("预言家, 座次号为" + (this.getNumber() + 1 ) + "号");
                 break;
             case 4:
-                welcome.setTitle("女巫, 座次号为" + this.getNumber() + "号");
+                welcome.setTitle("女巫, 座次号为" + (this.getNumber() + 1 ) + "号");
                 break;
             case 5:
-                welcome.setTitle("猎人, 座次号为" + this.getNumber() + "号");
+                welcome.setTitle("猎人, 座次号为" + (this.getNumber() + 1 ) + "号");
                 break;
             case 6:
-                welcome.setTitle("白痴, 座次号为" + this.getNumber() + "号");
+                welcome.setTitle("白痴, 座次号为" + (this.getNumber() + 1 ) + "号");
                 break;
             default:
                 break;
@@ -500,7 +500,7 @@ public class Village implements Runnable { // 玩家
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(10000); // 十秒投票时间
+                        delay.sleep(100000); // 十秒投票时间
                     } catch (InterruptedException e) {
 
                     }finally {
@@ -536,7 +536,7 @@ public class Village implements Runnable { // 玩家
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(10000); // 30秒投票时间
+                        delay.sleep(100000); // 100秒投票时间
                     } catch (InterruptedException e) {
 
                     }
@@ -565,19 +565,25 @@ public class Village implements Runnable { // 玩家
             closeAll();
             choose = false;
             centerConfirm.setVisible(true); // 先将面板设置为可见
-            sendMessage("点击 是 / 否 按钮, 确认请点提交\n请在十秒钟内做出选择\t");
+            sendMessage("点击 是 / 否 按钮, 确认请点提交\n请在十秒钟内做出选择\n");
             delay = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(10000); // 十秒投票时间
+                        delay.sleep(100000); // 十秒投票时间
                     } catch (InterruptedException e) {
 
                     }
                 }
             });
+            delay.start();
+            try {
+                delay.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             chooseMade = false;
-            centerConfirm.setVisible(false);
+            centerConfirm.setVisible(false); // 再次将该面板设置为不可见
             return choose;
 
         }
@@ -607,14 +613,14 @@ public class Village implements Runnable { // 玩家
                     jTextArea.append("选择" + (num + 1) + "号玩家\n");
                     close = true; // 可以结束了
                     closeAll(); // 关闭所有按钮
-//                    delay.interrupt();
+                    delay.interrupt();
                 }
                 else {
                     if(num == -2) {// 弃票
                         jTextArea.append("选择放弃\n");
                         close = true; // 可以结束了
                         closeAll(); // 关闭所有按钮
-//                        delay.interrupt();
+                        delay.interrupt();
                     }
                     else
                         jTextArea.append("还未选择\n");
@@ -635,6 +641,7 @@ public class Village implements Runnable { // 玩家
                 jTextArea.append("\n选择是, 确认请点提交提交\n");
                 choose = true;
                 chooseMade = true;
+                delay.interrupt();
             }
         }
         class No2 implements ActionListener{ // no2动作
@@ -651,7 +658,7 @@ public class Village implements Runnable { // 玩家
                 if (chooseMade == true){ // 做出了选择
                     jTextArea.append("已提交\n");
                     // 此时还未重置2个choose关键字
-//                    delay.interrupt();
+                    delay.interrupt();
                 }
                 else {
                     jTextArea.append("未作出选择, 先点击是 或者 否做出选择\n");

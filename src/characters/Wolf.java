@@ -41,19 +41,19 @@ public class Wolf extends Village implements Kill{
 
     @Override
     public void night(){ // 重写狼函数, 狼人夜晚只等刀人投票而已
-
-            while (Alive.voteKey[getNumber()]){ // 可以投票了
+        while (Alive.nightKey) {
+            while (Alive.voteKey[getNumber()]) { // 可以投票了
                 jTextArea.append("\n投票环节到, 选择目标玩家, 点确定提交\n");
 
 
                 int res = input(); // 夜晚投票, 候选人即全部存活玩家
-                Alive.candidates.get(this.getNumber()).clear(); // 投票完清空候选人列表
+//                Alive.candidates.get(this.getNumber()).clear(); // 投票完清空候选人列表
                 if (res >= 0) { // 未弃票
-                    Alive.voteResult[res] ++; // 被投玩家加一票
+                    Alive.voteResult[res]++; // 被投玩家加一票
                 }
                 Alive.voteKey[this.getNumber()] = false; // 已经投票完了
             }
-
+        }
     }
 
     public int getChoice(){ // 查询击杀目标
