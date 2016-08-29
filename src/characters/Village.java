@@ -66,14 +66,14 @@ public class Village implements Runnable { // 玩家
             @Override
             public void run() {
 
-                    while (Alive.voteKey[getNumber()]) {
+//                    while (Alive.voteKey[getNumber()]) {
                         if (MadeChoose()) // 如果上警
                             Alive.voteResult[getNumber()] = 1;
                         else
                             Alive.voteResult[getNumber()] = 0;
                         Alive.voteKey[getNumber()] = false; // 投完置0
                         return;
-                    }
+//                    }
                 }
 
         });
@@ -641,7 +641,7 @@ public class Village implements Runnable { // 玩家
                 jTextArea.append("\n选择是, 确认请点提交提交\n");
                 choose = true;
                 chooseMade = true;
-                delay.interrupt();
+//                delay.interrupt();
             }
         }
         class No2 implements ActionListener{ // no2动作

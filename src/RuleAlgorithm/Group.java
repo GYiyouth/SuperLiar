@@ -442,7 +442,7 @@ public class Group extends Thread{
             index++;
         }
         switch (candidate){ // 根据竞选人不同, 情况不同
-            case 0: MessageToAll("无人竞选警长,本局游戏无警长角色");
+            case 0: MessageToAll("无人竞选警长,本局游戏无警长角色\n");
                 break;
             case 1:{ // 仅一人竞选
                 int target = 0;

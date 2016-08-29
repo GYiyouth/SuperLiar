@@ -13,7 +13,7 @@ public class Prophet extends Village { // 预言家
     }
 
     public int checkIdentity(Village village){ // 可以查询某个玩家的身份
-        sendMessage(village.getNumber()+"号玩家的身份是\n");
+        sendMessage((village.getNumber() + 1)+"号玩家的身份是\n");
         switch (village.getIdentity()){
             case 0:this.sendMessage("中立\n"); break;
             case 1:this.sendMessage("好人\n"); break;
