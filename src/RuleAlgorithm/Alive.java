@@ -13,6 +13,7 @@ public class Alive { // 全局变量类
 
     public static volatile ArrayList<Integer> intPlayers = new ArrayList<>();
     public static volatile ArrayList<Integer> Leaving = new ArrayList<>();
+    public static volatile ArrayList<Integer> intWolves = new ArrayList<>();
     public static volatile HashMap<Integer, Village> Players = new HashMap<>();
     public static volatile HashMap<Integer, Village> Villagers = new HashMap<>();
     public static volatile HashMap<Integer, Village> Gods = new HashMap<>();

@@ -4,9 +4,12 @@ import RuleAlgorithm.Alive;
 import act.MyButton;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +42,9 @@ public class Village implements Runnable { // 玩家
     JPanel east = new JPanel(new GridLayout(2, 1, 20, 90)); // 右方面板, 2个按钮
     JPanel south = new JPanel(new GridLayout(2, 1, 90, 20)); // 下方面板, 第一排是确定取消键, 第二排是四个按钮键
     JPanel west = new JPanel(new GridLayout(2, 4, 20, 90)); // 左方面板, 2个按钮
-    JPanel center = new JPanel(new GridLayout(3, 1, 20, 30)); // 中间面板
+    JPanel center = new JPanel(new GridLayout(0, 1, 20, 30)); // 中间面板
+    JPanel talkPanel = new JPanel(new GridLayout(1, 0)); // 话语权面板, 用来狼人自爆或者说话PASS
+    JButton pass = new JButton(); // 聊天过, 自爆按钮
     JTextArea jTextArea = new JTextArea();
 
     // 按钮, 每个都代表一个玩家
@@ -102,15 +107,21 @@ public class Village implements Runnable { // 玩家
         container.add(east, BorderLayout.EAST);
         container.add(west, BorderLayout.WEST);
         center.add(new JScrollPane(jTextArea)); // 文字区域文字区域启动滚动条
+        center.add(talkPanel);
+        talkPanel.setVisible(false); //  一开始不可见
+        talkPanel.add(pass); // 添加按钮
         jTextArea.setLineWrap(true); // 自动换行
+
         myButtonGroup = new MyButtonGroup();
         village.setName("座次号为"+this.getNumber()+toString()); // 修改线程名字
         switch (this.getIdentity()) {
             case 1:
                 welcome.setTitle("村民, 座次号为" + (this.getNumber() + 1 ) + "号");
                 break;
-            case 2:
-                welcome.setTitle("狼人, 座次号为" + (this.getNumber() + 1 ) + "号");
+            case 2: {
+                welcome.setTitle("狼人, 座次号为" + (this.getNumber() + 1) + "号");
+//                this.lightOthersButton(Alive.intWolves, Color.RED); // 狼人辨认同伴
+            }
                 break;
             case 3:
                 welcome.setTitle("预言家, 座次号为" + (this.getNumber() + 1 ) + "号");
@@ -179,7 +190,7 @@ public class Village implements Runnable { // 玩家
             MessageToAll("目前是警长\n");
         else
             MessageToAll("目前不是警长\n");
-        MessageToAll("发言共计" + this.talk() + "次\n");
+        MessageToAll("发言共计" + this.Talktimes + "次\n");
     }
 
     public int die(int way) { // 死要进行移交警徽, 判胜负的功能, 死亡时移出Alive.intPlayers数组,
@@ -318,11 +329,37 @@ public class Village implements Runnable { // 玩家
         return this.canTalk;
     }
 
-    public synchronized int talk() { // 发言函数
-        if (this.getTalkRight() == false)
-            return Talktimes;
-        else
-            return ++Talktimes;
+    public synchronized void talk() { // 发言函数
+        talkPanel.setVisible(true); // 对于可见
+        lightOthersButton(Alive.intPlayers, Color.BLUE); // 通知其他玩家我在说话
+        Thread timeLimit = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(99999); // 沉睡
+                } catch (InterruptedException e) {
+                    talkPanel.setVisible(false); // 隐藏可见
+                    lightOthersButton(Alive.intPlayers, Color.BLACK); // 恢复颜色
+                }
+            }
+        });
+        timeLimit.start();
+        pass.addActionListener(new ActionListener() { // 添加pass动作,
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timeLimit.interrupt();
+            }
+        });
+        try {
+            timeLimit.join();
+        } catch (InterruptedException e) {
+            MessageToAll((getNumber()+1) + "号玩家发言结束 \n");
+        }
+        finally {
+            talkPanel.setVisible(false); //
+        }
+        Talktimes++;
+        return ;
     }
 
     public int getNumber() { // 返回玩家座次号
@@ -395,7 +432,15 @@ public class Village implements Runnable { // 玩家
         return myButtonGroup.Choose();
     }
 
+    public MyButtonGroup getMyButtonGroup(){ // 获取this.myButtonGroup
+        return myButtonGroup;
+    }
 
+    public void lightOthersButton(ArrayList<Integer> list, Color color){ // 使其他玩家的 自己的按钮 变色
+        for (int i : list){
+            Alive.Players.get(i).getMyButtonGroup().getButton(this.getNumber()).setForeground(color);
+        }
+    }
 
 
 
@@ -420,7 +465,12 @@ public class Village implements Runnable { // 玩家
                 myButtons[i].refresh();
 
             }
-            myButtons[getNumber()].setText("自己  "+(getNumber()+1)+"号玩家"); // 自己的按钮特殊处理
+//            myButtons[getNumber()].setBorderPainted(true);
+            myButtons[getNumber()].setForeground(Color.red); // 自己的按钮特殊处理
+//            myButtons[getNumber()].setBackground(Color.GREEN);
+//            URL url = ImageIcon.class.getResource("Myself.png");
+//            Icon icon = new ImageIcon(url);
+//            myButtons[getNumber()].setIcon(icon);
             for (int i = 0; i < 4; i++) {
                 north.add(myButtons[i]); // 添加前四个按钮
             }
@@ -486,6 +536,10 @@ public class Village implements Runnable { // 玩家
                 one.setEnabled(false);
         }
 
+        public MyButton getButton(int i){ // 取得某个按钮
+            return myButtons[i];
+        }
+
         public int getKey() { // 根据按钮获取投票结果
             refreshAll();
             key = -1;
@@ -523,7 +577,7 @@ public class Village implements Runnable { // 玩家
 
         public int getKey(ArrayList<Integer> list) { // 根据按钮获取投票结果
             refresh(list); // 仅开启数组中的按钮
-            sendMessage("请选择目标玩家, 10秒后自动提交");
+            sendMessage("请选择目标玩家, 10秒后自动提交\n");
             key = -1; // 什么操作都没做, 提交-1, 点了放弃提交-2, 否则提交正常玩家座次号
             num = -1;
             float time = System.currentTimeMillis(); // 当前时间
@@ -601,6 +655,7 @@ public class Village implements Runnable { // 玩家
             public void actionPerformed(ActionEvent e) {
                 num = temp; // 将key设定为点击的玩家序号
                 jTextArea.append("选择" + (num + 1) + "号玩家, 确定吗\n");
+
             }
         }
 

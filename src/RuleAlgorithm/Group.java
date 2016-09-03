@@ -3,6 +3,7 @@ package RuleAlgorithm;
 import characters.*;
 import com.sun.istack.internal.Nullable;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -133,6 +134,7 @@ public class Group extends Thread{
             map.clear();
             for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 狼的新表
                 map.put(entry.getValue().getNumber(), entry.getValue());
+                Alive.intWolves.add(entry.getValue().getNumber()); // 添加狼的座次数组
             }
             Alive.Wolves.clear();
             Alive.Wolves.putAll(map);
@@ -144,6 +146,7 @@ public class Group extends Thread{
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 遍历新表,打印
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+//            entry.getValue().lightOthersButton(Alive.intWolves, Color.RED); // 狼同伴相互标记为红色
         }
 //        Alive.talkKey = new Object[Alive.intPlayers.size()]; // 建立发言锁
 
@@ -313,6 +316,7 @@ public class Group extends Thread{
          * */
         WfKill.clear(); // 上一轮刀杀目标残留在数组中,清空
         Alive.Leaving.clear(); // 将上一轮将离场玩家清除
+        Alive.intWolves.clear();
 //        for (Village wolf : Alive.Wolves.values()) { // 遍历狼表,将欲击杀目标座次号添加到WfKill数组中
 //            Wolf wf = (Wolf) wolf;
 //            wf.wolfkill(Alive.intPlayers, WfKill);
@@ -321,11 +325,14 @@ public class Group extends Thread{
 //        for (int i : WfKill){
 //            count [i] ++;
 //        }
-        ArrayList<Integer> wolves = new ArrayList<>();
-        for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 遍历新表,打印
-            wolves.add(entry.getKey());
+//        ArrayList<Integer> wolves = new ArrayList<>();
+        for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 获取存活的狼, 组成新数组
+            Alive.intWolves.add(entry.getKey());
         }
-        int dyingMan = Vote(wolves, Alive.intPlayers);
+        for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 指认同伴
+            entry.getValue().lightOthersButton(Alive.intWolves, Color.RED);
+        }
+        int dyingMan = Vote(Alive.intWolves, Alive.intPlayers);
 //        int max = 0;
 //        for (int i = 0; i < intPlayers.length; i++){ // 找出被最多狼刀杀的那一个, 如果有多个平票, 则击杀第一个最高票玩家
 //            if (count[i] > max ){
@@ -520,7 +527,7 @@ public class Group extends Thread{
             Alive.voteResult[i] = 0; // 初始票为0
 
         for (int num: Voters){ // 每个投票人进行投票, 结果放在Aiive.voteResult中
-            sendMessage((num+1)+" 号玩家, 现在进行投票,候选人有\n"+ Candidates+"\n", num);
+            sendMessage((num+1)+" 号玩家, 现在进行投票, ", num);
             sendMessage("请点击玩家座次\n", num); // num是玩家座次号
             Alive.candidates.get(num).clear(); // 先清空
             Alive.candidates.put(num, Candidates); // 将候选人数组放置
@@ -697,7 +704,9 @@ public class Group extends Thread{
 
     public static void main(String[] args){
         Group one = new Group();
-
+//        for (Village village : Alive.Wolves.values()){ // 狼人辨认同伴
+//            village.lightOthersButton(Alive.intWolves, Color.RED);
+//        }
         one.Night();
         one.FirstDay();
 

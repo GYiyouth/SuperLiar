@@ -3,6 +3,9 @@ package characters;
 import RuleAlgorithm.Alive;
 import act.Kill;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -16,6 +19,11 @@ public class Wolf extends Village implements Kill{
     public Wolf( ){ // 构造函数
         super();
         this.setIdentity(2); // 2为狼人
+//        ArrayList<Integer> wolves = new ArrayList<>();
+//        for (int i : Alive.Wolves.keySet()) {
+//            wolves.add(i);
+//        }
+//        this.lightOthersButton(Alive.intWolves, Color.RED); // 将队友设置为红色
     }
 
     public int wolfkill( ArrayList<Integer> alivePlayers, ArrayList<Integer> WfKill){ // 夜晚击杀函数, 参数是当前存活玩家的 座次数组
@@ -43,7 +51,7 @@ public class Wolf extends Village implements Kill{
     public void night(){ // 重写狼函数, 狼人夜晚只等刀人投票而已
         while (Alive.nightKey) {
             while (Alive.voteKey[getNumber()]) { // 可以投票了
-                jTextArea.append("\n投票环节到, 选择目标玩家, 点确定提交\n");
+                jTextArea.append("\n狼人, 请选择击杀目标\n");
 
 
                 int res = input(); // 夜晚投票, 候选人即全部存活玩家
@@ -86,4 +94,5 @@ public class Wolf extends Village implements Kill{
         }
         return 0;
     }
+
 }
