@@ -253,6 +253,7 @@ public class Group extends Thread{
         Alive.nightKey = true;
 
         ProphetAct();
+//        getProphet().textToButtom(); // 输入点放在末尾
         WolfAct();
         WitchAct();
         Alive.nightKey = false;
@@ -346,6 +347,7 @@ public class Group extends Thread{
 //        }
         for (HashMap.Entry<Integer, Wolf> entry : Alive.Wolves.entrySet()) { // 关闭聊天通道
             entry.getValue().wolfPanel.setVisible(false);
+//            entry.getValue().textToButtom(); // 将输入点定位至底部
         }
         Alive.Leaving.add(dyingMan); // 将最终击杀目标添加到Leaving数组中
 
@@ -544,6 +546,7 @@ public class Group extends Thread{
             while (Alive.voteKey[num]){ // 还在投票
                 ;
             }
+//            Alive.Players.get(num).textToButtom(); // 投完了将点输入点定位到最后
 
         }
         // 计票
@@ -592,7 +595,11 @@ public class Group extends Thread{
     }
 
     public int Vote(ArrayList<Integer> Vt){ // 内部投票
-        return Vote(Vt, Vt);
+//        try {
+//            return Vote(Vt, Vt);
+//        }finally {
+//            AllTextToButtom();
+//        }
 //        ArrayList<Integer> Voters = new ArrayList<>();
 //        Voters.addAll(Vt);
 //        int [] result = new int[Voters.size()]; // 下标代表序号, 内容代表票数
@@ -649,7 +656,7 @@ public class Group extends Thread{
 //                return Vote(Voters, index);
 //            }
 //        }
-
+        return Vote(Vt, Vt);
     }
     public void TalkInOrders(){ // 如果无死者或者多个死者, 从警长开始发言, 否则从死左开始发言 。 警长总是最后发言
         if (Alive.Leaving.size() == 1){ // 如果仅有一位死者
@@ -707,6 +714,11 @@ public class Group extends Thread{
     public HashMap getPlayersMap( ){
         return Alive.Players;
     }
+
+//    public void AllTextToButtom(){ // 将所有人的jTextarea输入点放置在末日
+//        for (int i =0; i < tableNumber; i++)
+//            Alive.Players.get(i).textToButtom();
+//    }
 
     public static void main(String[] args){
         Group one = new Group();

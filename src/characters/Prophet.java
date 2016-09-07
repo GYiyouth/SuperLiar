@@ -20,6 +20,7 @@ public class Prophet extends Village { // 预言家
             case 2:this.sendMessage("坏人\n"); break;
             default:this.sendMessage("好人\n"); break;
         }
+//        textToButtom(); // 定位至最底端textToButtom
         return village.getIdentity();
     }
     @Override
@@ -35,6 +36,7 @@ public class Prophet extends Village { // 预言家
                     Alive.voteResult[res]++; // 被投玩家加一票
                 }
                 Alive.voteKey[this.getNumber()] = false; // 已经投票完了
+//                textToButtom(); // 输入点放在末尾
                 return;
             }
         }

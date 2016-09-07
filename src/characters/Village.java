@@ -4,12 +4,9 @@ import RuleAlgorithm.Alive;
 import act.MyButton;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -111,6 +108,7 @@ public class Village implements Runnable { // 玩家
         talkPanel.setVisible(false); //  一开始不可见
         talkPanel.add(pass); // 添加按钮
         jTextArea.setLineWrap(true); // 自动换行
+//        jTextArea.setEditable(false); // 不可编辑的, 但是设置为可编辑的时候可以看到输入点变化
 
         myButtonGroup = new MyButtonGroup();
         village.setName("座次号为"+this.getNumber()+toString()); // 修改线程名字
@@ -408,16 +406,17 @@ public class Village implements Runnable { // 玩家
         return false;
     }
 
-    public void sendMessage(String message){ // 往jTestArea写东西
-        String temp = jTextArea.getText();
-        if (!message.equals("")) { // 不为刷新对话框
-            jTextArea.setText("");
-            jTextArea.append(temp);
+    public void sendMessage(String message){ // 往jTestArea写东西, 自动将位置定位到最后
+//        String temp = jTextArea.getText();
+//        if (!message.equals("")) { // 不为刷新对话框
+//            jTextArea.setText("");
+//            jTextArea.append(temp);
             jTextArea.append(message);
-        }
-        else { // 刷新对话框
-
-        }
+            textToButtom();
+//        }
+//        else { // 刷新对话框
+//
+//        }
     }
 
 
@@ -452,7 +451,9 @@ public class Village implements Runnable { // 玩家
         }
     }
 
-
+    public void textToButtom(){
+        jTextArea.setCaretPosition(jTextArea.getDocument().getLength()); // 强迫输入点在最后
+    }
 
     class MyButtonGroup { // 内部类, 控制12个按钮, 控制输入情况
         MyButton[] myButtons = new MyButton[12]; // 12个按钮
@@ -460,7 +461,7 @@ public class Village implements Runnable { // 玩家
         JButton no = new JButton("放弃");
         JButton yes2 = new JButton("是");
         JButton no2 = new JButton("否");
-        JButton chooseConfirm = new JButton("提交");
+        JButton ChooseButton = new JButton("提交");
         private int num = -1; // 目前倾向
         private int key = -1; // 最终结果
         boolean close = false;  // 结束key, 点下确定后即设置位true
@@ -490,7 +491,8 @@ public class Village implements Runnable { // 玩家
             JPanel south1 = new JPanel(new GridLayout(1, 2, 20, 5)); // 放确定取消键
             JPanel south2 = new JPanel(new GridLayout(1, 4, 20, 5));
             south.add(south1);
-            centerConfirm.setVisible(true);
+//            centerConfirm.setVisible(false);
+
             yes.setSize(50, 20);
             no.setSize(50, 20);
             yes.addActionListener(new clickConfirm());
@@ -500,17 +502,18 @@ public class Village implements Runnable { // 玩家
             south.add(south1);
             yes2.setSize(50, 20);
             no2.setSize(50, 20);
-            chooseConfirm.setSize(50, 20);
+            ChooseButton.setSize(50, 20);
             yes2.addActionListener(new Yes2());
             no2.addActionListener(new No2());
-            chooseConfirm.addActionListener(new ChooseMade());
+            ChooseButton.addActionListener(new ChooseMade());
             yes2.setBorderPainted(false); // 不显示边框
             no2.setBorderPainted(false); // 不显示边框
-            chooseConfirm.setBorderPainted(false);
+            ChooseButton.setBorderPainted(false);
             centerConfirm.add(yes2);
             centerConfirm.add(no2);
-            centerConfirm.add(chooseConfirm);
+            centerConfirm.add(ChooseButton);
             centerConfirm.setVisible(false); // 默认不可见
+            center.add(centerConfirm);
             south1.add(yes);
             south1.add(no);
             for (int i = 9; i > 5; i--) {
@@ -628,8 +631,8 @@ public class Village implements Runnable { // 玩家
 
             closeAll();
             choose = false;
-            center.add(centerConfirm);
-//            centerConfirm.setVisible(true); // 先将面板设置为可见
+//            center.add(centerConfirm);
+            centerConfirm.setVisible(true); // 先将面板设置为可见
             sendMessage("点击 是 / 否 按钮, 确认请点提交\n请在十秒钟内做出选择\n");
             delay = new Thread(new Runnable() {
                 @Override
@@ -648,8 +651,9 @@ public class Village implements Runnable { // 玩家
                 e.printStackTrace();
             }
             chooseMade = false;
-            center.remove(centerConfirm);
-//            centerConfirm.setVisible(false); // 再次将该面板设置为不可见
+//            center.remove(centerConfirm);
+            centerConfirm.setVisible(false); // 再次将该面板设置为不可见
+//            textToButtom(); // 强迫输入点在最后, 放在这里并无卵用
             return choose;
 
         }
