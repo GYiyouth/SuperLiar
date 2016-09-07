@@ -143,13 +143,15 @@ public class Village implements Runnable { // 玩家
         while (!Alive.endGame) { // 游戏未结束
             day();
             night();
+//            while (!Alive.dayKey) // 等待白天
+
         }
     }
 
     public void day(){ // 白天投票函数, 需要准备好Alive.candidates中的相应数组, 投票完会清空, 处理了警长的情况.
         while (Alive.dayKey){ // 白天关键词有效
             while (Alive.voteKey[this.getNumber()]){ // 轮到他投票了
-                jTextArea.append("\n投票环节到, 选择目标玩家, 点确定提交\n");
+                sendMessage("\n投票环节到, 选择目标玩家, 点确定提交\n");
 
 
                 int res = input(Alive.candidates.get( this.getNumber() ) ); // 根据特定的数组, 得到投票结果
@@ -233,7 +235,7 @@ public class Village implements Runnable { // 玩家
             temp.clear();
             temp.addAll(Alive.intPlayers);
             temp.removeAll(Alive.Leaving);
-            jTextArea.append("请选择移交警徽, 当前存活玩家如下, 请点击移交对象, \"放弃\"撕掉警徽\n");
+            sendMessage("请选择移交警徽, 当前存活玩家如下, 请点击移交对象, \"放弃\"撕掉警徽\n");
 
             int target = input(temp); // 根据活人移交警徽
             if (temp.contains(target)) {
@@ -407,7 +409,15 @@ public class Village implements Runnable { // 玩家
     }
 
     public void sendMessage(String message){ // 往jTestArea写东西
-        jTextArea.append(message);
+        String temp = jTextArea.getText();
+        if (!message.equals("")) { // 不为刷新对话框
+            jTextArea.setText("");
+            jTextArea.append(temp);
+            jTextArea.append(message);
+        }
+        else { // 刷新对话框
+
+        }
     }
 
 
@@ -480,7 +490,7 @@ public class Village implements Runnable { // 玩家
             JPanel south1 = new JPanel(new GridLayout(1, 2, 20, 5)); // 放确定取消键
             JPanel south2 = new JPanel(new GridLayout(1, 4, 20, 5));
             south.add(south1);
-            center.add(centerConfirm);
+            centerConfirm.setVisible(true);
             yes.setSize(50, 20);
             no.setSize(50, 20);
             yes.addActionListener(new clickConfirm());
@@ -561,7 +571,7 @@ public class Village implements Runnable { // 玩家
                         if (Alive.intPlayers.contains(num))
                             sendMessage((num +1)+"号玩家, 已提交\n");
                         else
-                            sendMessage("已弃票");
+                            sendMessage("已弃票\n");
                     }
                 }
             });
@@ -569,7 +579,7 @@ public class Village implements Runnable { // 玩家
             try {
                 delay.join();
             } catch (InterruptedException e) {
-                System.out.println("getKey()出现问题");
+//                System.out.println("getKey()出现问题");
             }
             closeAll();
             return key;
@@ -599,7 +609,7 @@ public class Village implements Runnable { // 玩家
                             sendMessage((num + 1) + "号玩家, 已提交\n");
                         }
                         else
-                            sendMessage("已弃票");
+                            sendMessage("已弃票\n");
                     }
                 }
             });
@@ -608,7 +618,7 @@ public class Village implements Runnable { // 玩家
                 delay.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                System.out.println("getKey()出现问题");
+//                System.out.println("getKey()出现问题");
             }
             closeAll();
             return key;
@@ -618,7 +628,8 @@ public class Village implements Runnable { // 玩家
 
             closeAll();
             choose = false;
-            centerConfirm.setVisible(true); // 先将面板设置为可见
+            center.add(centerConfirm);
+//            centerConfirm.setVisible(true); // 先将面板设置为可见
             sendMessage("点击 是 / 否 按钮, 确认请点提交\n请在十秒钟内做出选择\n");
             delay = new Thread(new Runnable() {
                 @Override
@@ -637,7 +648,8 @@ public class Village implements Runnable { // 玩家
                 e.printStackTrace();
             }
             chooseMade = false;
-            centerConfirm.setVisible(false); // 再次将该面板设置为不可见
+            center.remove(centerConfirm);
+//            centerConfirm.setVisible(false); // 再次将该面板设置为不可见
             return choose;
 
         }
@@ -654,7 +666,7 @@ public class Village implements Runnable { // 玩家
             @Override
             public void actionPerformed(ActionEvent e) {
                 num = temp; // 将key设定为点击的玩家序号
-                jTextArea.append("选择" + (num + 1) + "号玩家, 确定吗\n");
+                sendMessage("选择" + (num + 1) + "号玩家, 确定吗\n");
 
             }
         }
@@ -665,20 +677,20 @@ public class Village implements Runnable { // 玩家
                 key = num; // 将key设定为点击的玩家序号
 
                 if (key >= 0) { // 进行了选择
-                    jTextArea.append("选择" + (num + 1) + "号玩家\n");
+                    sendMessage("选择" + (num + 1) + "号玩家\n");
                     close = true; // 可以结束了
                     closeAll(); // 关闭所有按钮
                     delay.interrupt();
                 }
                 else {
                     if(num == -2) {// 弃票
-                        jTextArea.append("选择放弃\n");
+                        sendMessage("选择放弃\n");
                         close = true; // 可以结束了
                         closeAll(); // 关闭所有按钮
                         delay.interrupt();
                     }
                     else
-                        jTextArea.append("还未选择\n");
+                        sendMessage("还未选择\n");
                 }
 
             }
@@ -687,7 +699,7 @@ public class Village implements Runnable { // 玩家
             @Override
             public void actionPerformed(ActionEvent e) {
                 num = -2; // 将key设定为点击的玩家序号
-                jTextArea.append("重置选择\n点击确定视为弃票\n");
+                sendMessage("重置选择\n点击确定视为弃票\n");
             }
         }
         class Yes2 implements ActionListener{ // yes2动作
@@ -702,7 +714,7 @@ public class Village implements Runnable { // 玩家
         class No2 implements ActionListener{ // no2动作
             @Override
             public void actionPerformed(ActionEvent e){
-                jTextArea.append("\n选择否, 确认请点提交提交\n");
+                sendMessage("\n选择否, 确认请点提交提交\n");
                 choose = false;
                 chooseMade = true;
             }
@@ -711,12 +723,12 @@ public class Village implements Runnable { // 玩家
             @Override
             public void actionPerformed(ActionEvent e){
                 if (chooseMade == true){ // 做出了选择
-                    jTextArea.append("已提交\n");
+                    sendMessage("已提交\n");
                     // 此时还未重置2个choose关键字
                     delay.interrupt();
                 }
                 else {
-                    jTextArea.append("未作出选择, 先点击是 或者 否做出选择\n");
+                    sendMessage("未作出选择, 先点击是 或者 否做出选择\n");
                 }
             }
         }

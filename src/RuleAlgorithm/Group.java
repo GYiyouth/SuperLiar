@@ -118,6 +118,7 @@ public class Group extends Thread{
         }
         {// 创建有序新表
             HashMap<Integer, Village> map = new HashMap<>();
+            HashMap<Integer, Wolf> Wolfmap = new HashMap<>();
             for (HashMap.Entry<Integer, Village> entry : Alive.Gods.entrySet()) { // 神的新表
                 map.put(entry.getValue().getNumber(), entry.getValue());
             }
@@ -132,19 +133,19 @@ public class Group extends Thread{
             Alive.Villagers.clear();
             Alive.Villagers.putAll(map);
             map.clear();
-            for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 狼的新表
-                map.put(entry.getValue().getNumber(), entry.getValue());
+            for (HashMap.Entry<Integer, Wolf> entry : Alive.Wolves.entrySet()) { // 狼的新表
+                Wolfmap.put(entry.getValue().getNumber(), entry.getValue());
                 Alive.intWolves.add(entry.getValue().getNumber()); // 添加狼的座次数组
             }
             Alive.Wolves.clear();
-            Alive.Wolves.putAll(map);
+            Alive.Wolves.putAll(Wolfmap);
             map.clear();
         }
         for (HashMap.Entry<Integer, Village> entry : Alive.Gods.entrySet()) { // 遍历新表,打印
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }for (HashMap.Entry<Integer, Village> entry : Alive.Villagers.entrySet()) { // 遍历新表,打印
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-        }for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 遍历新表,打印
+        }for (HashMap.Entry<Integer, Wolf> entry : Alive.Wolves.entrySet()) { // 遍历新表,打印
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 //            entry.getValue().lightOthersButton(Alive.intWolves, Color.RED); // 狼同伴相互标记为红色
         }
@@ -248,8 +249,9 @@ public class Group extends Thread{
     }
 
     public void Night(){ // 夜晚函数,主要阶段是狼人刀,女巫救,预言家查看
-        Alive.nightKey = true;
         MessageToAll("【【【天黑了!!!】】】\n");
+        Alive.nightKey = true;
+
         ProphetAct();
         WolfAct();
         WitchAct();
@@ -326,12 +328,14 @@ public class Group extends Thread{
 //            count [i] ++;
 //        }
 //        ArrayList<Integer> wolves = new ArrayList<>();
-        for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 获取存活的狼, 组成新数组
+        for (HashMap.Entry<Integer, Wolf> entry : Alive.Wolves.entrySet()) { // 获取存活的狼, 组成新数组
             Alive.intWolves.add(entry.getKey());
         }
-        for (HashMap.Entry<Integer, Village> entry : Alive.Wolves.entrySet()) { // 指认同伴
+        for (HashMap.Entry<Integer, Wolf> entry : Alive.Wolves.entrySet()) { // 告知同伴自己的身份
             entry.getValue().lightOthersButton(Alive.intWolves, Color.RED);
+            entry.getValue().wolfPanel.setVisible(true);
         }
+
         int dyingMan = Vote(Alive.intWolves, Alive.intPlayers);
 //        int max = 0;
 //        for (int i = 0; i < intPlayers.length; i++){ // 找出被最多狼刀杀的那一个, 如果有多个平票, 则击杀第一个最高票玩家
@@ -340,7 +344,9 @@ public class Group extends Thread{
 //                dyingMan = i;
 //            }
 //        }
-
+        for (HashMap.Entry<Integer, Wolf> entry : Alive.Wolves.entrySet()) { // 关闭聊天通道
+            entry.getValue().wolfPanel.setVisible(false);
+        }
         Alive.Leaving.add(dyingMan); // 将最终击杀目标添加到Leaving数组中
 
         return dyingMan;

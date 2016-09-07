@@ -26,7 +26,7 @@ public class Prophet extends Village { // 预言家
     public void night(){
         while (Alive.nightKey) {
             while (Alive.voteKey[getNumber()]) { // 可以投票了
-                jTextArea.append("\n投票环节到, 选择目标玩家, 点确定提交\n");
+                sendMessage("\n预言家，你想查看谁的身份？\n");
 
 
                 int res = input(); // 夜晚投票, 候选人即全部存活玩家
@@ -35,6 +35,7 @@ public class Prophet extends Village { // 预言家
                     Alive.voteResult[res]++; // 被投玩家加一票
                 }
                 Alive.voteKey[this.getNumber()] = false; // 已经投票完了
+                return;
             }
         }
     }

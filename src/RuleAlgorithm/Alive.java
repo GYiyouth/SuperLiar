@@ -1,6 +1,7 @@
 package RuleAlgorithm;
 
 import characters.Village;
+import characters.Wolf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ public class Alive { // 全局变量类
     public static volatile HashMap<Integer, Village> Players = new HashMap<>();
     public static volatile HashMap<Integer, Village> Villagers = new HashMap<>();
     public static volatile HashMap<Integer, Village> Gods = new HashMap<>();
-    public static volatile HashMap<Integer, Village> Wolves = new HashMap<>();
+    public static volatile HashMap<Integer, Wolf> Wolves = new HashMap<>();
     public static volatile Object[] talkKey; // 发言关键字
     public static volatile Object talkKeyAll = new Object(); // 发言总开关
     public static volatile boolean[] voteKey; // 投票关键字, 不能使用Object, 很麻烦, 因为主函数不常是拥有着
